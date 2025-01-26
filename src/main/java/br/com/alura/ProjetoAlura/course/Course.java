@@ -24,6 +24,8 @@ public class Course {
     @Column(nullable = false, updatable = false)
     /*Used to control information related to dates and times*/
     private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
+    private LocalDateTime deactivationDate;
 
 
     public Course() {}
@@ -49,6 +51,10 @@ public class Course {
 
     public LocalDateTime getLocalDateTime() {return createdAt;}
 
-
+    public void inactivate() {
+        this.status = CourseStatus.INACTIVE;
+        this.deactivationDate = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
 }

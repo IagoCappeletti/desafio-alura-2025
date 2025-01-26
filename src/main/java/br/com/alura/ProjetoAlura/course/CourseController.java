@@ -29,9 +29,28 @@ public class CourseController {
 
     @PostMapping("/course/{code}/inactive")
     public ResponseEntity createCourse(@PathVariable("code") String courseCode) {
-        // TODO: Implementar a Questão 2 - Inativação de Curso aqui...
+        if (courseCode == null || courseCode.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("O código do curso é obrigatório.");
+        }
 
-        return ResponseEntity.ok().build();
+        try {
+            Optional<Course> optionalCourse = repository.findByCode(courseCode);
+
+            if (optionalCourse.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado.");
+            }
+
+            Course course = optionalCourse.get();
+            if (course.getStatus() == CourseStatus.INACTIVE) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("O curso já está inativo.");
+            }
+
+            course.inactivate();
+            repository.save(course);
+
+            return ResponseEntity.ok(course);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a inativação do curso: " + e.getMessage());
+        }
     }
-
 }
