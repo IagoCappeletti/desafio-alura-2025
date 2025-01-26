@@ -2,25 +2,23 @@ package br.com.alura.ProjetoAlura.course;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.Pattern;
+
+import static br.com.alura.ProjetoAlura.course.CourseStatus.ACTIVE;
 
 public class NewCourseDTO {
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Name is required.")
     private String name;
 
-    @NotNull
     @NotBlank
-    @Length(min = 4, max = 10)
+    @Pattern(regexp = "^[a-zA-Z-]{4,10}$", message = "The code must be between 4 and 10 characters long, without spaces or numbers, and may include hyphens.")
     private String code;
 
     private String description;
 
-    @NotNull
     @NotBlank
-    @Email
+    @Email(message = "Instructor email is required.")
     private String instructorEmail;
 
     public NewCourseDTO() {}
@@ -55,5 +53,9 @@ public class NewCourseDTO {
 
     public void setInstructorEmail(String instructorEmail) {
         this.instructorEmail = instructorEmail;
+    }
+
+    public Course toModel() {
+        return new Course(code,name, instructorEmail, description, ACTIVE);
     }
 }
