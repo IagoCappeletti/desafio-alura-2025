@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -21,10 +22,12 @@ public class CourseController {
     /*Method for registering a new course and sending confirmation in the body of the REQ*/
     @Transactional
     @PostMapping("/course/new")
-    public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
+    public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse, UriComponentsBuilder uriBuilder) {
         Course course = newCourse.toModel();
         repository.save(course);
-        return ResponseEntity.status(HttpStatus.CREATED).body(course);
+
+        var uri = uriBuilder.path("/course/{code}").buildAndExpand(course.getCode()).toUri();
+        return ResponseEntity.created(uri).body(course);
     }
 
     @PostMapping("/course/{code}/inactive")
