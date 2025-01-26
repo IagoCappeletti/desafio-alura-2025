@@ -48,7 +48,7 @@ public class CourseController {
             course.inactivate();
             repository.save(course);
 
-            return ResponseEntity.ok(course);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a inativação do curso: " + e.getMessage());
         }
