@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.registration;
 
-import br.com.alura.ProjetoAlura.course.Course;
+import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
 import br.com.alura.ProjetoAlura.user.User;
 import jakarta.persistence.*;
 
@@ -20,7 +20,7 @@ public class CourseRegistration {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+    private CourseEntity course;
 
     @Column(name = "registration_date", nullable = false, updatable = false)
     private LocalDateTime registrationDate = LocalDateTime.now();
@@ -28,7 +28,7 @@ public class CourseRegistration {
     @Deprecated
     public CourseRegistration() {}
 
-    public CourseRegistration(User user, Course course, LocalDateTime registrationDate) {
+    public CourseRegistration(User user, CourseEntity course, LocalDateTime registrationDate) {
         this.user = user;
         this.course = course;
         this.registrationDate = registrationDate;
@@ -50,11 +50,11 @@ public class CourseRegistration {
         this.user = user;
     }
 
-    public Course getCourse() {
+    public CourseEntity getCourse() {
         return course;
     }
 
-    public void setCourse(Course course) {
+    public void setCourse(CourseEntity course) {
         this.course = course;
     }
 

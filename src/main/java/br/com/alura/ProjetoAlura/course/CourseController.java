@@ -1,8 +1,8 @@
-package br.com.alura.ProjetoAlura.course;
+package br.com.alura.ProjetoAlura.courseEntity;
 
+import br.com.alura.ProjetoAlura.util.ErrorItemDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +16,20 @@ import java.util.Optional;
 @RestController
 public class CourseController {
 
-    @Autowired
     private CourseRepository repository;
 
-    /*Method for registering a new course and sending confirmation in the body of the REQ*/
+    CourseController(CourseRepository repository) {
+        this.repository = repository;
+    }
+
     @Transactional
     @PostMapping("/course/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse, UriComponentsBuilder uriBuilder) {
+        if(repository.existsByCode(newCourse.getCode())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorItemDTO("code", "This course is already registered"));
+        }
+
         Course course = newCourse.toModel();
         repository.save(course);
 
@@ -33,19 +40,22 @@ public class CourseController {
     @PostMapping("/course/{code}/inactive")
     public ResponseEntity createCourse(@PathVariable("code") String courseCode) {
         if (courseCode == null || courseCode.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("O código do curso é obrigatório.");
+            return ResponseEntity.badRequest().body("Course code is required.");
         }
 
         try {
             Optional<Course> optionalCourse = repository.findByCode(courseCode);
 
             if (optionalCourse.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        new ErrorItemDTO("code", "Course code does not exist.")
+                );
             }
 
             Course course = optionalCourse.get();
             if (course.getStatus() == CourseStatus.INACTIVE) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("O curso já está inativo.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        new ErrorItemDTO("code", "The course is already inactive."));
             }
 
             course.inactivate();
@@ -53,7 +63,8 @@ public class CourseController {
 
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a inativação do curso: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorItemDTO("code", "Error processing course inactivation." + e.getMessage()));
         }
     }
 }

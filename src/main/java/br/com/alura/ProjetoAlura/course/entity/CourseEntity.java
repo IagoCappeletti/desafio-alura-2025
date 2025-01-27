@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.course;
+package br.com.alura.ProjetoAlura.course.repository;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -6,12 +6,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-public class Course {
+public class CourseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String code;
     private String name;
     private String instructorName;
@@ -23,15 +22,17 @@ public class Course {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    /*Used to control information related to dates and times*/
+
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
     private LocalDateTime deactivationDate;
 
+    public CourseEntity(String code, CourseStatus status) {
+        this.code = code;
+        this.status = status;
+    }
 
-    public Course() {}
-
-    public Course(String code, String name, String instructorName, String instructorEmail, String description, CourseStatus status) {
+    public CourseEntity(String code, String name, String instructorName, String instructorEmail, String description, CourseStatus status) {
         this.code = code;
         this.name = name;
         this.instructorName = instructorName;
@@ -39,7 +40,6 @@ public class Course {
         this.description = description;
         this.status = status;
     }
-
 
     public String getCode() {return code;}
 
@@ -62,5 +62,4 @@ public class Course {
         this.deactivationDate = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
-
 }
