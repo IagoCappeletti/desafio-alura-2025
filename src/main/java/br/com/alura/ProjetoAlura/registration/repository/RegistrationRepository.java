@@ -14,7 +14,7 @@ public interface RegistrationRepository extends JpaRepository<CourseRegistration
     boolean existsByUserAndCourse(User user, CourseEntity course);
 
     @Query("""
-    SELECT new br.com.alura.ProjetoAlura.registration.CourseRegistrationDetailsDTO(
+    SELECT new br.com.alura.ProjetoAlura.registration.dto.CourseRegistrationDetailsDTO(
         c.name,
         c.code,
         c.instructorName,
