@@ -1,4 +1,7 @@
-package br.com.alura.ProjetoAlura.user;
+package br.com.alura.ProjetoAlura.user.dto;
+
+import br.com.alura.ProjetoAlura.user.entity.Role;
+import br.com.alura.ProjetoAlura.user.entity.User;
 
 import java.io.Serializable;
 
