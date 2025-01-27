@@ -1,14 +1,18 @@
 package br.com.alura.ProjetoAlura.course;
 
+import br.com.alura.ProjetoAlura.course.dto.NewCourseDTO;
+import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
+import br.com.alura.ProjetoAlura.course.entity.CourseStatus;
+import br.com.alura.ProjetoAlura.course.repository.CourseRepository;
+import br.com.alura.ProjetoAlura.user.entity.Role;
+import br.com.alura.ProjetoAlura.user.entity.User;
+import br.com.alura.ProjetoAlura.user.repository.UserRepository;
+import br.com.alura.ProjetoAlura.util.ErrorItemDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
@@ -16,44 +20,77 @@ import java.util.Optional;
 @RestController
 public class CourseController {
 
-    @Autowired
     private CourseRepository repository;
+    private UserRepository userRepository;
 
-    /*Method for registering a new course and sending confirmation in the body of the REQ*/
+    CourseController(CourseRepository repository, UserRepository userRepository) {
+        this.repository = repository;
+        this.userRepository = userRepository;
+    }
+
     @Transactional
     @PostMapping("/course/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse, UriComponentsBuilder uriBuilder) {
-        Course course = newCourse.toModel();
+        if(repository.existsByCode(newCourse.getCode())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorItemDTO("code", "This course is already registered"));
+        }
+
+        String instructorEmail = newCourse.getInstructorEmail();
+        Optional<User> userOptional = userRepository.findByEmail(instructorEmail);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorItemDTO("instructorEmail", "Supervisor not found"));
+        }
+
+        User user = userOptional.get();
+
+        if(user.getRole() != Role.INSTRUCTOR){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorItemDTO("code", "The supervisor must be an instructor"));
+        }
+
+        CourseEntity course = newCourse.toModel();
         repository.save(course);
 
         var uri = uriBuilder.path("/course/{code}").buildAndExpand(course.getCode()).toUri();
         return ResponseEntity.created(uri).body(course);
     }
 
-    @PostMapping("/course/{code}/inactive")
-    public ResponseEntity createCourse(@PathVariable("code") String courseCode) {
-        if (courseCode == null || courseCode.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("O código do curso é obrigatório.");
-        }
-
+    /*I believe that in this endpoint, the most appropriate method would be a PUT to update an existing resource in an
+    idempotent manner. The POST method, which was already included in the project, is generally used to create new resources.*/
+    @PutMapping("/course/{code}/inactive")
+    public ResponseEntity inactivateCourse(@PathVariable("code") String courseCode) {
         try {
-            Optional<Course> optionalCourse = repository.findByCode(courseCode);
-
-            if (optionalCourse.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado.");
+            if (courseCode == null || courseCode.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new ErrorItemDTO("code", "Course code is required.")
+                );
             }
 
-            Course course = optionalCourse.get();
+            Optional<CourseEntity> optionalCourse = repository.findByCode(courseCode);
+
+            if (optionalCourse.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        new ErrorItemDTO("code", "Course code does not exist.")
+                );
+            }
+
+            CourseEntity course = optionalCourse.get();
+
             if (course.getStatus() == CourseStatus.INACTIVE) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("O curso já está inativo.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        new ErrorItemDTO("code", "The course is already inactive."));
             }
 
             course.inactivate();
-            repository.save(course);
+            CourseEntity inactivatedCourse = repository.save(course);
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.OK).body(inactivatedCourse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a inativação do curso: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorItemDTO("code", "Error processing course inactivation." + e.getMessage()));
         }
     }
 }

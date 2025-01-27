@@ -1,9 +1,10 @@
 package br.com.alura.ProjetoAlura.user;
 
+import br.com.alura.ProjetoAlura.user.entity.User;
 import br.com.alura.ProjetoAlura.util.EncryptUtil;
 import org.junit.jupiter.api.Test;
 
-import static br.com.alura.ProjetoAlura.user.Role.STUDENT;
+import static br.com.alura.ProjetoAlura.user.entity.Role.STUDENT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserTest {

@@ -1,10 +1,11 @@
-package br.com.alura.ProjetoAlura.course;
+package br.com.alura.ProjetoAlura.course.dto;
 
+import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-import static br.com.alura.ProjetoAlura.course.CourseStatus.ACTIVE;
+import static br.com.alura.ProjetoAlura.course.entity.CourseStatus.ACTIVE;
 
 public class NewCourseDTO {
 
@@ -59,7 +60,11 @@ public class NewCourseDTO {
         this.instructorEmail = instructorEmail;
     }
 
-    public Course toModel() {
-        return new Course(code,name, instructorName, instructorEmail, description, ACTIVE);
+    public CourseEntity toModel() {
+        return new CourseEntity(code,name, instructorName, instructorEmail, description, ACTIVE);
+    }
+
+    public void setInstructorName(String name) {
+        this.instructorName = name;
     }
 }

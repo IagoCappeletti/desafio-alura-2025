@@ -1,13 +1,16 @@
 package br.com.alura.ProjetoAlura.registration;
 
-import br.com.alura.ProjetoAlura.course.Course;
-import br.com.alura.ProjetoAlura.course.CourseRepository;
-import br.com.alura.ProjetoAlura.course.CourseStatus;
-import br.com.alura.ProjetoAlura.user.User;
-import br.com.alura.ProjetoAlura.user.UserRepository;
+import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
+import br.com.alura.ProjetoAlura.course.repository.CourseRepository;
+import br.com.alura.ProjetoAlura.course.entity.CourseStatus;
+import br.com.alura.ProjetoAlura.registration.dto.NewRegistrationDTO;
+import br.com.alura.ProjetoAlura.registration.entity.CourseRegistration;
+import br.com.alura.ProjetoAlura.registration.entity.RegistrationReportItem;
+import br.com.alura.ProjetoAlura.registration.repository.RegistrationRepository;
+import br.com.alura.ProjetoAlura.user.entity.User;
+import br.com.alura.ProjetoAlura.user.repository.UserRepository;
 import br.com.alura.ProjetoAlura.util.ErrorItemDTO;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +26,19 @@ import java.util.stream.Collectors;
 @RestController
 public class RegistrationController {
 
-    @Autowired
-    CourseRepository courseRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RegistrationRepository registrationRepository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final RegistrationRepository registrationRepository;
+
+    RegistrationController(CourseRepository courseRepository, UserRepository userRepository, RegistrationRepository registrationRepository) {
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+        this.registrationRepository = registrationRepository;
+    }
 
     @PostMapping("/registration/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewRegistrationDTO newRegistration, UriComponentsBuilder uriBuilder) {
-        Optional<Course> course = courseRepository.findByCode((newRegistration.getCourseCode()));
+        Optional<CourseEntity> course = courseRepository.findByCode((newRegistration.getCourseCode()));
         if (course.isEmpty() || course.get().getStatus() != CourseStatus.ACTIVE) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorItemDTO("Code", "Course does not exist or is inactive! Please try again with another code."));
@@ -56,8 +62,6 @@ public class RegistrationController {
 
         var uri = uriBuilder.path("/registration/{id}").buildAndExpand(registration.getId()).toUri();
         return ResponseEntity.created(uri).body(registration);
-
-
     }
 
     @GetMapping("/registration/report")
