@@ -4,6 +4,7 @@ import br.com.alura.ProjetoAlura.course.dto.NewCourseDTO;
 import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
 import br.com.alura.ProjetoAlura.course.entity.CourseStatus;
 import br.com.alura.ProjetoAlura.course.repository.CourseRepository;
+import br.com.alura.ProjetoAlura.course.service.CourseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,12 @@ public class CourseControllerTest {
 
     @MockBean
     private CourseRepository courseRepository;
+
+    @MockBean
+    private CourseController courseController;
+
+    @MockBean
+    private CourseService courseService;
 
     @Autowired
     private ObjectMapper objectMapper;

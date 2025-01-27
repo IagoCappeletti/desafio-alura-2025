@@ -1,5 +1,6 @@
 package br.com.alura.ProjetoAlura.user;
 
+import br.com.alura.ProjetoAlura.user.dto.NewInstructorUserDTO;
 import br.com.alura.ProjetoAlura.user.dto.NewStudentUserDTO;
 import br.com.alura.ProjetoAlura.user.dto.UserListItemDTO;
 import br.com.alura.ProjetoAlura.user.entity.User;
@@ -30,10 +31,24 @@ public class UserController {
     public ResponseEntity newStudent(@RequestBody @Valid NewStudentUserDTO newStudent) {
         if(userRepository.existsByEmail(newStudent.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorItemDTO("email", "Email já cadastrado no sistema"));
+                    .body(new ErrorItemDTO("email", "Email already registered in the system"));
         }
 
         User user = newStudent.toModel();
+        userRepository.save(user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Transactional
+    @PostMapping("/user/newInstructor")
+    public ResponseEntity newInstructor(@RequestBody @Valid NewInstructorUserDTO newInstructor) {
+        if(userRepository.existsByEmail(newInstructor.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorItemDTO("email", "Email already registered in the system"));
+        }
+
+        User user = newInstructor.toModel();
         userRepository.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
