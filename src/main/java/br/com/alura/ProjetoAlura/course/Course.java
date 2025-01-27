@@ -14,6 +14,7 @@ public class Course {
 
     private String code;
     private String name;
+    private String instructorName;
     private String instructorEmail;
     private String description;
 
@@ -30,9 +31,10 @@ public class Course {
 
     public Course() {}
 
-    public Course(String code, String name, String instructorEmail, String description, CourseStatus status) {
+    public Course(String code, String name, String instructorName, String instructorEmail, String description, CourseStatus status) {
         this.code = code;
         this.name = name;
+        this.instructorName = instructorName;
         this.instructorEmail = instructorEmail;
         this.description = description;
         this.status = status;
@@ -46,6 +48,10 @@ public class Course {
     public String getInstructorEmail() {return instructorEmail;}
 
     public String getDescription() {return description;}
+
+    public String getInstructorName() {return instructorName;}
+
+    public void setInstructorName(String instructorName) {this.instructorName = instructorName;}
 
     public CourseStatus getStatus() {return status;}
 
