@@ -21,7 +21,6 @@ public class NewStudentUserDTO {
     @NotNull
     @Length(min = 8, max = 16)
     private String password;
-
     public NewStudentUserDTO() {}
 
     public String getName() {
