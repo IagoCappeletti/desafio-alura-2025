@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.course.repository;
+package br.com.alura.ProjetoAlura.course.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "course")
 public class CourseEntity {
 
     @Id
@@ -39,6 +40,10 @@ public class CourseEntity {
         this.instructorEmail = instructorEmail;
         this.description = description;
         this.status = status;
+    }
+
+    public CourseEntity() {
+
     }
 
     public String getCode() {return code;}

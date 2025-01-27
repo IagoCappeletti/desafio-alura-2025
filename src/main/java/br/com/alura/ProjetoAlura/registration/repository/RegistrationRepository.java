@@ -1,7 +1,9 @@
-package br.com.alura.ProjetoAlura.registration;
+package br.com.alura.ProjetoAlura.registration.repository;
 
 import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
-import br.com.alura.ProjetoAlura.user.User;
+import br.com.alura.ProjetoAlura.registration.dto.CourseRegistrationDetailsDTO;
+import br.com.alura.ProjetoAlura.registration.entity.CourseRegistration;
+import br.com.alura.ProjetoAlura.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

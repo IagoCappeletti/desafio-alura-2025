@@ -1,7 +1,7 @@
-package br.com.alura.ProjetoAlura.registration;
+package br.com.alura.ProjetoAlura.registration.entity;
 
 import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
-import br.com.alura.ProjetoAlura.user.User;
+import br.com.alura.ProjetoAlura.user.entity.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

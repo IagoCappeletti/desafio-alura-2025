@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.registration;
+package br.com.alura.ProjetoAlura.registration.entity;
 
 public class RegistrationReportItem {
 

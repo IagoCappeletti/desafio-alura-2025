@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.user;
+package br.com.alura.ProjetoAlura.user.entity;
 
 import br.com.alura.ProjetoAlura.util.EncryptUtil;
 import jakarta.persistence.*;

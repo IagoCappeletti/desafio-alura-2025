@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.course;
+package br.com.alura.ProjetoAlura.course.dto;
 
 import br.com.alura.ProjetoAlura.course.entity.CourseEntity;
 import jakarta.validation.constraints.Email;

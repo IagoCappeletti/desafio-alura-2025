@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.course.repository;
+package br.com.alura.ProjetoAlura.course.entity;
 
 public enum CourseStatus {
     ACTIVE,
