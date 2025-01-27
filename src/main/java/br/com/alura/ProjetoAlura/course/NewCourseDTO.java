@@ -16,6 +16,8 @@ public class NewCourseDTO {
     private String code;
 
     private String description;
+    @NotBlank
+    private String instructorName;
 
     @NotBlank
     @Email(message = "Instructor email is required.")
@@ -47,6 +49,8 @@ public class NewCourseDTO {
         this.description = description;
     }
 
+    public String getInstructorName() {return instructorName;}
+
     public String getInstructorEmail() {
         return instructorEmail;
     }
@@ -56,6 +60,6 @@ public class NewCourseDTO {
     }
 
     public Course toModel() {
-        return new Course(code,name, instructorEmail, description, ACTIVE);
+        return new Course(code,name, instructorName, instructorEmail, description, ACTIVE);
     }
 }
